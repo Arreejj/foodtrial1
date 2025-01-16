@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "956475593872",
+    "project_id": "foodtrial-5f45b",
+    "storage_bucket": "foodtrial-5f45b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956475593872:android:05a84b3bec6cb0f9073415",
+        "android_client_info": {
+          "package_name": "com.example.areej"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqrj5MiQZZEQH9lS4FpzMZVSHLM8zg62c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
