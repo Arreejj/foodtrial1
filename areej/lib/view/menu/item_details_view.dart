@@ -130,7 +130,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                                           CrossAxisAlignment.end,
                                       children: [
                                         Text(
-                                          "\EGP${price.toStringAsFixed(2)}",
+                                          "EGP${price.toStringAsFixed(2)}",
                                           style: TextStyle(
                                               color: TColor.primaryText,
                                               fontSize: 31,
@@ -442,7 +442,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                                                     height: 15,
                                                   ),
                                                   Text(
-                                                    "\EGP${(price * qty).toString()}",
+                                                    "EGP${(price * qty).toString()}",
                                                     style: TextStyle(
                                                         color:
                                                             TColor.primaryText,

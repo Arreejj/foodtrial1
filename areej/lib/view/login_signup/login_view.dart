@@ -5,6 +5,7 @@ import 'package:areej/common_widget/round_button.dart';
 import 'package:areej/common_widget/round_textfield.dart';
 import 'package:areej/common_widget/round_icon_button.dart';
 import 'package:areej/view/login_signup/reset_password_view.dart';
+import 'package:areej/view/admin_dashboard/AdminDashboard.dart'; 
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,14 +45,12 @@ class LoginView extends ConsumerWidget {
                     fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 25),
-              // Email Field with Validation
               RoundTextfield(
                 hintText: "Your Email",
                 controller: txtEmail,
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 25),
-              // Password Field with Validation
               RoundTextfield(
                 hintText: "Password",
                 controller: txtPassword,
@@ -63,29 +62,53 @@ class LoginView extends ConsumerWidget {
                   : RoundButton(
                       title: "Login",
                       onPressed: () async {
-                        if (txtEmail.text.isNotEmpty && txtPassword.text.isNotEmpty) {
-                          final signInProviderNotifier = ref.read(signInProvider.notifier);
+                        if (txtEmail.text.isNotEmpty &&
+                            txtPassword.text.isNotEmpty) {
                           String email = txtEmail.text;
                           String password = txtPassword.text;
 
-                          bool success = await signInProviderNotifier.signIn(email, password);
-
-                          if (success) {
+                          // Check for admin credentials
+                          if (email == 'admin@gmail.com' &&
+                              password == 'admin@123') {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>  HomeView(),
+                                builder: (context) => AdminDashboard(),
                               ),
                             );
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(signInState.errorMessage.isEmpty
-                                    ? 'Email or password wrong. Please try again.'
-                                    : signInState.errorMessage),
-                              ),
-                            );
+                            final signInProviderNotifier =
+                                ref.read(signInProvider.notifier);
+
+                            // Proceed with regular user login
+                            bool success = await signInProviderNotifier
+                                .signIn(email, password);
+
+                            if (success) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomeView(),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      signInState.errorMessage.isEmpty
+                                          ? 'Email or password wrong. Please try again.'
+                                          : signInState.errorMessage),
+                                ),
+                              );
+                            }
                           }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  "Please fill in both email and password."),
+                            ),
+                          );
                         }
                       },
                     ),
@@ -117,7 +140,6 @@ class LoginView extends ConsumerWidget {
                     fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 30),
-              // Facebook Login Button
               RoundIconButton(
                 icon: "assets/img/facebook_logo.png",
                 title: "Login with Facebook",
@@ -125,7 +147,6 @@ class LoginView extends ConsumerWidget {
                 onPressed: () {},
               ),
               const SizedBox(height: 25),
-              // Google Login Button
               RoundIconButton(
                 icon: "assets/img/google_logo.png",
                 title: "Login with Google",
@@ -136,12 +157,13 @@ class LoginView extends ConsumerWidget {
                     if (user != null) {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) =>  HomeView()),
+                        MaterialPageRoute(builder: (context) => HomeView()),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text("Google sign-in failed. Please try again.")),
+                            content: Text(
+                                "Google sign-in failed. Please try again.")),
                       );
                     }
                   } catch (e) {
@@ -152,7 +174,6 @@ class LoginView extends ConsumerWidget {
                 },
               ),
               const SizedBox(height: 30),
-              // Sign Up Redirect
               Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -168,7 +189,8 @@ class LoginView extends ConsumerWidget {
                     onTap: () {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SignUpView()));
+                          MaterialPageRoute(
+                              builder: (context) => SignUpView()));
                     },
                     child: Text(
                       "Sign Up",

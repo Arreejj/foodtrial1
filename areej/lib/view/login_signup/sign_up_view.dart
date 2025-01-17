@@ -16,6 +16,8 @@ class SignUpView extends ConsumerWidget {
   final TextEditingController txtPassword = TextEditingController();
   final _formkey = GlobalKey<FormState>();
 
+  SignUpView({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     

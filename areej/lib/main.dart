@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:areej/view/login_signup/welcome_view.dart';
 import 'package:areej/main_tabview/main_tabview.dart';
-import 'package:areej/user_auth/firebase_auth_implementation/firebase_auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
