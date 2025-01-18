@@ -5,12 +5,13 @@ import 'package:areej/common_widget/round_button.dart';
 import 'package:areej/common_widget/round_textfield.dart';
 import 'package:areej/common_widget/round_icon_button.dart';
 import 'package:areej/view/login_signup/reset_password_view.dart';
-import 'package:areej/view/admin_dashboard/AdminDashboard.dart'; 
-
+import 'package:areej/view/admin_dashboard/AdminDashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:areej/providers/sign_in_provider.dart';
 import 'package:areej/user_auth/firebase_auth_implementation/firebase_auth_service.dart';
+
+import '../resturant_dashboard/ResturantDashboard.dart';
 
 class LoginView extends ConsumerWidget {
   const LoginView({super.key});
@@ -67,8 +68,18 @@ class LoginView extends ConsumerWidget {
                           String email = txtEmail.text;
                           String password = txtPassword.text;
 
+                          // Check for owner credentials
+                          if (email == 'owner@gmail.com' &&
+                              password == 'owner@123') {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ResturantDashboard(),
+                              ),
+                            );
+                          }
                           // Check for admin credentials
-                          if (email == 'admin@gmail.com' &&
+                          else if (email == 'admin@gmail.com' &&
                               password == 'admin@123') {
                             Navigator.pushReplacement(
                               context,
