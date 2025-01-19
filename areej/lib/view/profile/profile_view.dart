@@ -1,14 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:areej/common_widget/round_button.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:areej/common/color_extension.dart';
+import 'package:areej/common_widget/round_button.dart';
 import 'package:areej/common_widget/round_title_textfield.dart';
 
 class ProfileView extends StatefulWidget {
-  const ProfileView({super.key});
+  final String userId; // Pass user ID to fetch data
+  const ProfileView({super.key, required this.userId});
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -23,8 +25,57 @@ class _ProfileViewState extends State<ProfileView> {
   TextEditingController txtMobile = TextEditingController();
   TextEditingController txtAddress = TextEditingController();
   TextEditingController txtPassword = TextEditingController();
-  TextEditingController txtConfirmPassword = TextEditingController();
-  int initialTab = 3;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData(); // Fetch user data from Firestore
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+        setState(() {
+          txtName.text = data['name'] ?? '';
+          txtEmail.text = data['email'] ?? '';
+          txtMobile.text = data['mobile'] ?? '';
+          txtAddress.text = data['address'] ?? '';
+          txtPassword.text = data['password'] ?? ''; // For demo purposes
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error loading data: $e")),
+      );
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(widget.userId).update({
+        'name': txtName.text,
+        'email': txtEmail.text,
+        'mobile': txtMobile.text,
+        'address': txtAddress.text,
+        'password': txtPassword.text, // Save password only if needed
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error updating profile: $e")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -38,19 +89,13 @@ class _ProfileViewState extends State<ProfileView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 46),
-              _buildHeader(),
-              const SizedBox(height: 20),
               _buildProfileImage(media),
               _buildEditProfileButton(),
-              _buildGreetingText(),
-              _buildSignOutButton(),
               const SizedBox(height: 20),
               _buildTextField("Name", "Enter Name", txtName),
               _buildTextField("Email", "Enter Email", txtEmail, keyboardType: TextInputType.emailAddress),
               _buildTextField("Mobile No", "Enter Mobile No", txtMobile, keyboardType: TextInputType.phone),
               _buildTextField("Address", "Enter Address", txtAddress),
-              _buildTextField("Password", "* * * * * *", txtPassword, obscureText: true),
-              _buildTextField("Confirm Password", "* * * * * *", txtConfirmPassword, obscureText: true),
               const SizedBox(height: 20),
               _buildSaveButton(),
               const SizedBox(height: 20),
@@ -61,37 +106,6 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  // Header with Profile and Cart
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Profile",
-            style: TextStyle(
-              color: TColor.primaryText,
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              // Navigate to orders if needed
-            },
-            icon: Image.asset(
-              "assets/img/shopping_cart.png",
-              width: 25,
-              height: 25,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Profile Image Widget
   Widget _buildProfileImage(Size media) {
     return Container(
       width: 100,
@@ -114,7 +128,6 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  // Edit Profile Button
   Widget _buildEditProfileButton() {
     return TextButton.icon(
       onPressed: () async {
@@ -133,34 +146,6 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  // Greeting Text
-  Widget _buildGreetingText() {
-    return Text(
-      "Hi there Areej!",
-      style: TextStyle(
-        color: TColor.primaryText,
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-  }
-
-  // Sign Out Button
-  Widget _buildSignOutButton() {
-    return TextButton(
-      onPressed: () {},
-      child: Text(
-        "Sign Out",
-        style: TextStyle(
-          color: TColor.secondaryText,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  // Generalized TextField widget
   Widget _buildTextField(String title, String hintText, TextEditingController controller,
       {TextInputType? keyboardType, bool obscureText = false}) {
     return Padding(
@@ -175,11 +160,13 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  // Save Button
   Widget _buildSaveButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: RoundButton(title: "Save", onPressed: () {}),
+      child: RoundButton(
+        title: "Save",
+        onPressed: _saveProfile,
+      ),
     );
   }
 }

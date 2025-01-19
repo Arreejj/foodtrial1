@@ -6,6 +6,7 @@ import 'package:areej/view/menu/menu_view.dart';
 import 'package:areej/view/more/more_view.dart';
 import 'package:areej/view/offer/offer_view.dart';
 import 'package:areej/view/profile/profile_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MainTabView extends StatefulWidget {
   const MainTabView({super.key});
@@ -17,17 +18,51 @@ class MainTabView extends StatefulWidget {
 class _MainTabViewState extends State<MainTabView> {
   int _selectedTab = 2;
   final PageController _pageController = PageController(initialPage: 2); // PageController to manage PageView
-  
-  final List<Widget> _pages = [
-    const MenuView(),
-    const OfferView(),
-    const HomeView(),
-    const ProfileView(),
-    MoreView(),
-  ];
+  String? userId; // Declare the userId
+
+  final List<Widget> _pages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserId(); // Fetch the userId when the page is initialized
+  }
+
+  Future<void> _fetchUserId() async {
+    try {
+      // Fetching the userId from Firebase Authentication
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        setState(() {
+          userId = currentUser.uid;
+        });
+      }
+    } catch (e) {
+      // Handle error in fetching user ID
+      print("Error fetching user ID: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (userId == null) {
+      // If the userId is still loading, show a loading screen or placeholder
+      return Scaffold(
+        appBar: AppBar(title: const Text("My App")),
+        body: const Center(child: CircularProgressIndicator()), // Loading indicator
+      );
+    }
+
+    // If userId is available, build the page
+    _pages.clear();
+    _pages.addAll([
+      const MenuView(),
+      const OfferView(),
+      const HomeView(),
+      ProfileView(userId: userId!),  // Pass the userId here
+      const MoreView(),
+    ]);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("My App"),
