@@ -1,4 +1,3 @@
-// lib/screens/user_details_page.dart
 import 'package:flutter/material.dart';
 import '/model/user.dart';
 
@@ -18,12 +17,13 @@ class UserDetails extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Name: ${user.name}'),
-            Text('id: ${user.id}'),
-            Text('Email: ${user.email}'),
-            Text('User Type: ${user.role}'),
-            if (user.role == 'user') Text('Orders Count: ${user.ordersCount}'),
-            Text('Join Date: ${user.joinDate.toLocal()}'),
+            Text('Name: ${user.name}', style: const TextStyle(fontSize: 18)),
+            Text('ID: ${user.id ?? 'N/A'}', style: const TextStyle(fontSize: 18)),
+            Text('Email: ${user.email}', style: const TextStyle(fontSize: 18)),
+            Text('User Role: ${user.role}', style: const TextStyle(fontSize: 18)),
+            if (user.role == 'user')
+              Text('Orders Count: ${user.ordersCount}', style: const TextStyle(fontSize: 18)),
+            Text('Join Date: ${user.joinDate.toLocal()}'.split(' ')[0], style: const TextStyle(fontSize: 18)),
           ],
         ),
       ),

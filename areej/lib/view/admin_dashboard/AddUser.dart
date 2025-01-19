@@ -14,6 +14,7 @@ class AddUser extends StatelessWidget {
     final mobileController = TextEditingController();
     final addressController = TextEditingController();
     final passwordController = TextEditingController();
+    String userRole = 'user'; // Default role
 
     return Scaffold(
       appBar: AppBar(title: const Text('Add New User')),
@@ -23,38 +24,101 @@ class AddUser extends StatelessWidget {
           key: formKey,
           child: Column(
             children: [
+              // Name Field
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
-                validator: (value) =>
-                    value?.isEmpty ?? true ? 'Please enter a name' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a name';
+                  }
+                  return null;
+                },
               ),
+              
+              // Email Field
               TextFormField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) =>
-                    value?.isEmpty ?? true ? 'Please enter an email' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an email';
+                  }
+                  final emailPattern =
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                  final regExp = RegExp(emailPattern);
+                  if (!regExp.hasMatch(value)) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
               ),
+              
+              // Mobile Field
               TextFormField(
                 controller: mobileController,
                 decoration: const InputDecoration(labelText: 'Mobile'),
-                validator: (value) =>
-                    value?.isEmpty ?? true ? 'Please enter a mobile' : null,
+                keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a mobile number';
+                  }
+                  if (value.length < 10) {
+                    return 'Mobile number must be at least 10 digits';
+                  }
+                  return null;
+                },
               ),
+              
+              // Address Field
               TextFormField(
                 controller: addressController,
                 decoration: const InputDecoration(labelText: 'Address'),
-                validator: (value) =>
-                    value?.isEmpty ?? true ? 'Please enter an address' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an address';
+                  }
+                  return null;
+                },
               ),
+              
+              // Password Field
               TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                validator: (value) =>
-                    value?.isEmpty ?? true ? 'Please enter a password' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters';
+                  }
+                  return null;
+                },
               ),
+              
+              // User Role Selection (Dropdown)
+              DropdownButtonFormField<String>(
+                value: userRole,
+                decoration: const InputDecoration(labelText: 'User Role'),
+                items: <String>['user', 'owner', 'admin']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    userRole = newValue;
+                  }
+                },
+              ),
+
               const SizedBox(height: 16),
+              
+              // Submit Button
               ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState?.validate() ?? false) {
@@ -64,10 +128,11 @@ class AddUser extends StatelessWidget {
                       mobile: mobileController.text,
                       address: addressController.text,
                       password: passwordController.text,
+                      role: userRole,
                       joinDate: DateTime.now(),
                     );
-                    onAddUser(newUser);
-                    Navigator.pop(context);
+                    onAddUser(newUser); // Call the callback function to add the user
+                    Navigator.pop(context); // Close the AddUser page
                   }
                 },
                 child: const Text('Add User'),
