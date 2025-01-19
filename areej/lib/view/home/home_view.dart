@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:areej/common/color_extension.dart';
 import 'package:areej/common_widget/round_textfield.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../common_widget/category_cell.dart';
 import '../../common_widget/most_popular_cell.dart';
-import 'package:areej/common_widget/popular_restaurant_show.dart';
+import '../../common_widget/popular_restaurant_show.dart';
 import '../../common_widget/recent_item_row.dart';
 import '../../common_widget/view_all_title_row.dart';
-
+import 'package:flutter/material.dart';
+import 'package:areej/common/color_extension.dart';
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
@@ -98,6 +98,24 @@ class _HomeViewState extends State<HomeView> {
     },
   ];
 
+  // Fetch the first name dynamically using the user's ID from Firebase Authentication
+  Future<String?> getFirstName() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser; // Get the current user
+      if (user != null) {
+        final userId = user.uid; // Get the user ID
+        final userDoc =
+            FirebaseFirestore.instance.collection('users').doc(userId);
+        final snapshot = await userDoc.get();
+        return snapshot.data()?['name']; // Return the first name
+      }
+      return null;
+    } catch (e) {
+      print("Error fetching first name: $e");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,25 +124,48 @@ class _HomeViewState extends State<HomeView> {
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Column(
             children: [
-              const SizedBox(
-                height: 46,
-              ),
+              const SizedBox(height: 46),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Good morning ",
-                      style: TextStyle(
-                          color: TColor.primaryText,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800),
+                    FutureBuilder<String?>(
+                      future: getFirstName(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Text(
+                            "Good morning",
+                            style: TextStyle(
+                              color: TColor.primaryText,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          );
+                        } else if (snapshot.hasError || !snapshot.hasData) {
+                          return Text(
+                            "Good morning",
+                            style: TextStyle(
+                              color: TColor.primaryText,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          );
+                        } else {
+                          return Text(
+                            "Good morning, ${snapshot.data!}",
+                            style: TextStyle(
+                              color: TColor.primaryText,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          );
+                        }
+                      },
                     ),
                     IconButton(
-                      onPressed: () {
-                       
-                      },
+                      onPressed: () {},
                       icon: Image.asset(
                         "assets/img/shopping_cart.png",
                         width: 25,

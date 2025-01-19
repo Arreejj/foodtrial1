@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:areej/common_widget/sidebar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/model/user.dart';
-import 'UserDetails.dart';
-import 'UsersList.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});

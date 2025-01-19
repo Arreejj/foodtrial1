@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'Category.dart';
 
 class Products extends StatefulWidget {
   final List<String> categories; // Pass categories from the AddCategoryPage
