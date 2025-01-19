@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:areej/common/color_extension.dart';
 import 'package:areej/common_widget/round_button.dart';
@@ -76,6 +77,28 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
+  Future<void> _deleteAccount() async {
+    try {
+      // Delete the user data from Firestore
+      await FirebaseFirestore.instance.collection('users').doc(widget.userId).delete();
+      
+      // Delete the user's Firebase Authentication account
+      User? user = FirebaseAuth.instance.currentUser;
+      await user?.delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Account deleted successfully!')),
+      );
+
+      // After deletion, navigate to the login or welcome screen
+      Navigator.pushReplacementNamed(context, '/login'); // Adjust route as needed
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error deleting account: $e")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -99,6 +122,7 @@ class _ProfileViewState extends State<ProfileView> {
               const SizedBox(height: 20),
               _buildSaveButton(),
               const SizedBox(height: 20),
+              _buildDeleteAccountButton(),  // Added Delete Account Button
             ],
           ),
         ),
@@ -166,6 +190,17 @@ class _ProfileViewState extends State<ProfileView> {
       child: RoundButton(
         title: "Save",
         onPressed: _saveProfile,
+      ),
+    );
+  }
+
+  Widget _buildDeleteAccountButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: RoundButton(
+        title: "Delete Account",
+        onPressed: _deleteAccount,
+       
       ),
     );
   }

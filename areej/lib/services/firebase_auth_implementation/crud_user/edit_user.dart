@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '/model/user.dart';
+import '/model/user.dart'; // Your custom User class
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth; // Alias Firebase Auth User class
 
 class EditUser extends StatefulWidget {
-  final User user;
+  final User user;  // Custom User class from /model/user.dart
   final Function(User) onUserUpdated;
 
   const EditUser({super.key, required this.user, required this.onUserUpdated});
@@ -45,7 +46,7 @@ class _EditUserState extends State<EditUser> {
 
   Future<void> _updateUser() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final updatedUser = User(
+      final updatedUser = User(  // Custom User class
         id: widget.user.id,
         name: nameController.text,
         email: emailController.text,
@@ -74,6 +75,31 @@ class _EditUserState extends State<EditUser> {
           SnackBar(content: Text("Error updating user: $e")),
         );
       }
+    }
+  }
+
+  Future<void> _deleteUser() async {
+    try {
+      // Delete user document from Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.user.id)
+          .delete();
+
+      // Delete the user's authentication account if exists
+      firebase_auth.User? firebaseUser = firebase_auth.FirebaseAuth.instance.currentUser;  // Use aliased FirebaseUser
+      if (firebaseUser != null && firebaseUser.uid == widget.user.id) {
+        await firebaseUser.delete();
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User deleted successfully')),
+      );
+      Navigator.pop(context); // Navigate back after deletion
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error deleting user: $e")),
+      );
     }
   }
 
