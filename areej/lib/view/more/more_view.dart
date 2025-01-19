@@ -5,7 +5,7 @@ import 'package:areej/view/more/notification_view.dart';
 import 'package:areej/view/more/about_us_view.dart';
 import 'package:areej/view/more/inbox_view.dart';
 import 'package:areej/view/more/my_order_view.dart';
-import 'package:areej/user_auth/firebase_auth_implementation/firebase_auth_service.dart';
+import 'package:areej/services/firebase_auth_implementation/firebase_auth_service.dart';
 import 'package:areej/view/login_signup/welcome_view.dart';
 
 class MoreView extends StatefulWidget {
@@ -148,17 +148,16 @@ class _MoreViewState extends State<MoreView> {
                           );
                           break;
 
-                      case "6":
-  // Perform logout and navigate to the login screen or update UI
-  await FirebaseAuthService().logout();
-   Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const WelcomeView(), 
-    ),
-  );
-  break;
-
+                        case "6":
+                          // Perform logout and navigate to the login screen or update UI
+                          await FirebaseAuthService().logout();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const WelcomeView(),
+                            ),
+                          );
+                          break;
 
                           // Handle other cases if necessary
                           break;

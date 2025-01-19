@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:areej/user_auth/firebase_auth_implementation/firebase_auth_service.dart';
+import 'package:areej/services/firebase_auth_implementation/firebase_auth_service.dart';
 
 class SignUpState {
   final bool isLoading; // Indicates whether the process is in progress

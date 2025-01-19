@@ -9,7 +9,7 @@ import 'package:areej/view/admin_dashboard/AdminDashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:areej/providers/sign_in_provider.dart';
-import 'package:areej/user_auth/firebase_auth_implementation/firebase_auth_service.dart';
+import 'package:areej/services/firebase_auth_implementation/firebase_auth_service.dart';
 
 import '../resturant_dashboard/ResturantDashboard.dart';
 
@@ -92,8 +92,8 @@ class LoginView extends ConsumerWidget {
                                 ref.read(signInProvider.notifier);
 
                             // Proceed with regular user login
-                            bool success = await signInProviderNotifier
-                                .signIn(email, password);
+                            bool success = await signInProviderNotifier.signIn(
+                                email, password);
 
                             if (success) {
                               Navigator.pushReplacement(
@@ -105,10 +105,9 @@ class LoginView extends ConsumerWidget {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(
-                                      signInState.errorMessage.isEmpty
-                                          ? 'Email or password wrong. Please try again.'
-                                          : signInState.errorMessage),
+                                  content: Text(signInState.errorMessage.isEmpty
+                                      ? 'Email or password wrong. Please try again.'
+                                      : signInState.errorMessage),
                                 ),
                               );
                             }
