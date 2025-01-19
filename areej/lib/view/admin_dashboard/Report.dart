@@ -56,6 +56,7 @@ class _ReportState extends State<Report> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
         title: const Text('Reports',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         centerTitle: true,

@@ -102,7 +102,10 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Restaurant'),
+        backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
+        title: const Text('Edit Restaurant',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -163,6 +166,8 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
                   print("Please fill all fields.");
                 }
               },
+              style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6F00),
+                foregroundColor: Colors.white),
               child: const Text('Save Changes'),
             ),
           ],

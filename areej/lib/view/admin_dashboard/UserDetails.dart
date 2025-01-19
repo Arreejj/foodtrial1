@@ -10,7 +10,10 @@ class UserDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(user.name),
+        backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
+        title: Text(user.name,
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

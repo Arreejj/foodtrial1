@@ -36,6 +36,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       appBar: AppBar(
         title: const Text('MealMonkey Dashboard'),
         backgroundColor: Color(0xffffc6011),
+        foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {

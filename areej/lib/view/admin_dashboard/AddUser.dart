@@ -17,7 +17,12 @@ class AddUser extends StatelessWidget {
     String userRole = 'user'; 
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add New User')),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
+        title: const Text('Add New User',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -134,6 +139,8 @@ class AddUser extends StatelessWidget {
                     Navigator.pop(context); // Close the AddUser page
                   }
                 },
+                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6F00),
+                foregroundColor: Colors.white),
                 child: const Text('Add User'),
               ),
             ],

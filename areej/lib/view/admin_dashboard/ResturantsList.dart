@@ -117,7 +117,10 @@ class _RestaurantsListState extends State<RestaurantsList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Restaurants List'),
+        backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
+        title: const Text('Restaurants List',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

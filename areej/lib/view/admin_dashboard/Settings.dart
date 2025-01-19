@@ -12,8 +12,10 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text('Settings',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

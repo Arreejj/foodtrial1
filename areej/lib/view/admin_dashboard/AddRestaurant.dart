@@ -59,7 +59,10 @@ class _AddRestaurantState extends State<AddRestaurant> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Restaurant'),
+      backgroundColor: const Color(0xFFFF6F00),
+      foregroundColor: Colors.white,
+        title: const Text('Add Restaurant',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -154,7 +157,9 @@ class _AddRestaurantState extends State<AddRestaurant> {
       print("Please select an owner.");
     }
   },
-  child: const Text('Add Restaurant'),
+  style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6F00),
+                foregroundColor: Colors.white),
+  child:const Text('Add Restaurant'),
 ),
 
             ],

@@ -47,7 +47,11 @@ class _OrdersState extends State<Orders> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Orders')),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
+        title: const Text('My Orders',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
       body: ListView.builder(
         itemCount: orders.length,
         itemBuilder: (context, index) {

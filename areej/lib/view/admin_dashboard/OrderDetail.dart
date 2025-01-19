@@ -14,7 +14,11 @@ class OrderDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Order Details')),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
+        title: const Text('Order Details',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

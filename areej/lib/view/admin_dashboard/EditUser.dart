@@ -79,7 +79,11 @@ class _EditUserState extends State<EditUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit User')),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
+        title: const Text('Edit User',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -134,6 +138,8 @@ class _EditUserState extends State<EditUser> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _updateUser,
+                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6F00),
+                foregroundColor: Colors.white),
                 child: const Text('Update User'),
               ),
             ],
