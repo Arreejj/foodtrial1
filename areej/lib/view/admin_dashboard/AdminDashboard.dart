@@ -37,11 +37,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
       key: _scaffoldKey, 
       appBar: AppBar(
-        title: const Text('MealMonkey Admin Dashboard'),
+        title: const Text('MealMonkey Dashboard'),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {
-            _scaffoldKey.currentState?.openDrawer(); // Open the drawer
+            _scaffoldKey.currentState?.openDrawer(); 
           },
         ),
       ),
@@ -52,7 +52,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Admin Dashboard',
+              'Hello Admin!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -76,11 +76,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Admin Name', 
+                      'Admin ', 
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      'admin@example.com',
+                      'admin@gmail.com',
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                   ],

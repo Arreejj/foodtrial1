@@ -10,20 +10,26 @@ class UserDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${user.name} Details'),
+        title: Text(user.name),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Name: ${user.name}', style: const TextStyle(fontSize: 18)),
-            Text('ID: ${user.id ?? 'N/A'}', style: const TextStyle(fontSize: 18)),
-            Text('Email: ${user.email}', style: const TextStyle(fontSize: 18)),
-            Text('User Role: ${user.role}', style: const TextStyle(fontSize: 18)),
-            if (user.role == 'user')
-              Text('Orders Count: ${user.ordersCount}', style: const TextStyle(fontSize: 18)),
-            Text('Join Date: ${user.joinDate.toLocal()}'.split(' ')[0], style: const TextStyle(fontSize: 18)),
+            Text('Name: ${user.name}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text('Email: ${user.email}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text('Mobile: ${user.mobile}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text('Address: ${user.address}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text('Role: ${user.role}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text('Orders Count: ${user.ordersCount}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text('Join Date: ${user.joinDate}', style: TextStyle(fontSize: 18)),
           ],
         ),
       ),

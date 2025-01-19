@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:areej/model/Order.dart';  // Import the Order model
+import 'package:areej/model/Order.dart';  
 
 class OrderDetail extends StatelessWidget {
   final Order order;
-  final Function(String) onCancelOrder; // Function to handle order cancellation
+  final Function(String) onCancelOrder; 
 
   const OrderDetail({
     super.key, 

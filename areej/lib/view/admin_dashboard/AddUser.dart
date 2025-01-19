@@ -14,7 +14,7 @@ class AddUser extends StatelessWidget {
     final mobileController = TextEditingController();
     final addressController = TextEditingController();
     final passwordController = TextEditingController();
-    String userRole = 'user'; // Default role
+    String userRole = 'user'; 
 
     return Scaffold(
       appBar: AppBar(title: const Text('Add New User')),
@@ -24,7 +24,7 @@ class AddUser extends StatelessWidget {
           key: formKey,
           child: Column(
             children: [
-              // Name Field
+              
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
@@ -36,7 +36,7 @@ class AddUser extends StatelessWidget {
                 },
               ),
               
-              // Email Field
+             
               TextFormField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
@@ -54,7 +54,7 @@ class AddUser extends StatelessWidget {
                 },
               ),
               
-              // Mobile Field
+              
               TextFormField(
                 controller: mobileController,
                 decoration: const InputDecoration(labelText: 'Mobile'),
@@ -70,7 +70,7 @@ class AddUser extends StatelessWidget {
                 },
               ),
               
-              // Address Field
+             
               TextFormField(
                 controller: addressController,
                 decoration: const InputDecoration(labelText: 'Address'),
@@ -82,7 +82,7 @@ class AddUser extends StatelessWidget {
                 },
               ),
               
-              // Password Field
+            
               TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(labelText: 'Password'),
@@ -98,7 +98,7 @@ class AddUser extends StatelessWidget {
                 },
               ),
               
-              // User Role Selection (Dropdown)
+           
               DropdownButtonFormField<String>(
                 value: userRole,
                 decoration: const InputDecoration(labelText: 'User Role'),
@@ -117,8 +117,7 @@ class AddUser extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
-              
-              // Submit Button
+          
               ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState?.validate() ?? false) {
