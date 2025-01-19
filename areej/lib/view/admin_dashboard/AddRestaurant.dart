@@ -14,12 +14,12 @@ class _AddRestaurantState extends State<AddRestaurant> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _cuisineController = TextEditingController();
   String _selectedOwnerId = '';
-  List<Map<String, dynamic>> owners = []; // List to hold owners' data
+  List<Map<String, dynamic>> owners = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchOwners(); // Fetch owners when the widget is initialized
+    _fetchOwners();
   }
 
   @override
@@ -34,17 +34,16 @@ class _AddRestaurantState extends State<AddRestaurant> {
     try {
       QuerySnapshot ownerSnapshot = await FirebaseFirestore.instance
           .collection('users')
-          .where('role', isEqualTo: 'owner') // Filter owners by role
+          .where('role', isEqualTo: 'owner')
           .get();
 
       if (ownerSnapshot.docs.isNotEmpty) {
-        // Map the snapshot to a list of owners
         setState(() {
           owners = ownerSnapshot.docs.map((doc) {
             var data = doc.data() as Map<String, dynamic>;
             return {
-              'id': doc.id, // Document ID
-              'name': data['name'] ?? 'Unknown Owner', // Owner's name
+              'id': doc.id,
+              'name': data['name'] ?? 'Unknown Owner',
             };
           }).toList();
         });
@@ -95,7 +94,7 @@ class _AddRestaurantState extends State<AddRestaurant> {
                   return null;
                 },
               ),
-                const SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _cuisineController,
                 decoration: const InputDecoration(
@@ -115,8 +114,8 @@ class _AddRestaurantState extends State<AddRestaurant> {
                 hint: const Text('Select Restaurant Owner'),
                 items: owners.map((owner) {
                   return DropdownMenuItem<String>(
-                    value: owner['id'], // Set the owner id as the value
-                    child: Text(owner['name']), // Display the owner's name
+                    value: owner['id'],
+                    child: Text(owner['name']),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -130,26 +129,34 @@ class _AddRestaurantState extends State<AddRestaurant> {
                 ),
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate() && _selectedOwnerId.isNotEmpty) {
-                    // Add restaurant to Firestore with the selected owner
-                    FirebaseFirestore.instance.collection('restaurants').add({
-                      'name': _nameController.text,
-                      'location': _locationController.text,
-                      'cuisine': _cuisineController.text,
-                      'ownerId': _selectedOwnerId, // Associate the restaurant with the selected owner
-                    }).then((value) {
-                      Navigator.pop(context); // Close the screen after adding the restaurant
-                    }).catchError((error) {
-                      print("Failed to add restaurant: $error");
-                    });
-                  } else {
-                    print("Please select an owner.");
-                  }
-                },
-                child: const Text('Add Restaurant'),
-              ),
+            ElevatedButton(
+  onPressed: () {
+    if (_formKey.currentState!.validate() && _selectedOwnerId.isNotEmpty) {
+      // Add restaurant to Firestore with the selected owner
+      FirebaseFirestore.instance.collection('restaurants').add({
+        'name': _nameController.text,
+        'location': _locationController.text,
+        'cuisine': _cuisineController.text,
+        'ownerId': _selectedOwnerId, // Associate the restaurant with the selected owner
+      }).then((value) {
+        // After adding the restaurant, fetch the newly added restaurant and send it back
+        Navigator.pop(context, {
+          'name': _nameController.text,
+          'location': _locationController.text,
+          'cuisine': _cuisineController.text,
+          'ownerId': _selectedOwnerId,
+        });
+       
+      }).catchError((error) {
+        print("Failed to add restaurant: $error");
+      });
+    } else {
+      print("Please select an owner.");
+    }
+  },
+  child: const Text('Add Restaurant'),
+),
+
             ],
           ),
         ),
