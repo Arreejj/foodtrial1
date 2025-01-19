@@ -16,7 +16,7 @@ class _UsersListState extends State<UsersList> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late CollectionReference usersCollection;
   List<DocumentSnapshot> _users = [];
-  bool _isLoading = true; // Added loading state
+  bool _isLoading = true; 
 
   @override
   void initState() {
@@ -25,17 +25,17 @@ class _UsersListState extends State<UsersList> {
     _fetchUsers();
   }
 
-  // Fetch users from Firestore
+ 
   Future<void> _fetchUsers() async {
     try {
       final querySnapshot = await usersCollection.get();
       setState(() {
         _users = querySnapshot.docs;
-        _isLoading = false; // Stop loading after fetching
+        _isLoading = false; 
       });
     } catch (e) {
       setState(() {
-        _isLoading = false; // Stop loading even if there's an error
+        _isLoading = false; 
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error fetching users: $e")),
@@ -43,11 +43,11 @@ class _UsersListState extends State<UsersList> {
     }
   }
 
-  // Delete user from Firestore
+  
   void _deleteUser(String userId) async {
     try {
       await usersCollection.doc(userId).delete();
-      _fetchUsers(); // Refresh the list after deletion
+      _fetchUsers(); 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User deleted successfully')),
       );
@@ -58,7 +58,7 @@ class _UsersListState extends State<UsersList> {
     }
   }
 
-  // Navigate to Add User page
+  
   void _navigateToAddUser() {
     Navigator.push(
       context,
@@ -91,7 +91,7 @@ class _UsersListState extends State<UsersList> {
     );
   }
 
-  // Navigate to Edit User page
+ 
   void _navigateToEditUser(User user) {
     Navigator.push(
       context,
@@ -99,7 +99,7 @@ class _UsersListState extends State<UsersList> {
         builder: (context) => EditUser(
           user: user,
           onUserUpdated: (updatedUser) {
-            _fetchUsers(); // Refresh the list after edit
+            _fetchUsers(); 
           },
         ),
       ),
@@ -120,7 +120,7 @@ class _UsersListState extends State<UsersList> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(), // Show loading spinner
+              child: CircularProgressIndicator(), 
             )
           : _users.isEmpty
               ? const Center(
@@ -142,6 +142,7 @@ class _UsersListState extends State<UsersList> {
 
                     return ListTile(
                       leading: CircleAvatar(
+                        backgroundColor: Colors.orange,
                         child: Text(user.name.isNotEmpty ? user.name[0] : "?"),
                       ),
                       title: Text(user.name),
