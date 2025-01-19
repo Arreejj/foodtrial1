@@ -5,8 +5,8 @@ import 'package:areej/common_widget/round_button.dart';
 import 'package:areej/common_widget/round_textfield.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:areej/view/on_boarding/on_boarding_view.dart';
-import 'package:areej/view/login_signup/login_view.dart'; 
- //consumer ashan hya hat-listen le riverpod and update according le changes de
+import 'package:areej/view/login_signup/login_view.dart';
+
 class SignUpView extends ConsumerWidget {
   final TextEditingController txtName = TextEditingController();
   final TextEditingController txtMobile = TextEditingController();
@@ -20,7 +20,6 @@ class SignUpView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
     final signUpState = ref.watch(signUpProvider);
 
     return Scaffold(
@@ -146,24 +145,29 @@ class SignUpView extends ConsumerWidget {
                 const SizedBox(height: 25),
 
                 signUpState.isLoading
-                    ? const CircularProgressIndicator() 
+                    ? const CircularProgressIndicator()
                     : RoundButton(
                         title: "Sign Up",
                         onPressed: () async {
                           if (_formkey.currentState?.validate() ?? false) {
-                            final signUpProviderNotifier = ref.read(signUpProvider.notifier);
+                            final signUpProviderNotifier =
+                                ref.read(signUpProvider.notifier);
 
-                        
-                            String email = txtEmail.text;
-                            String password = txtPassword.text;
+                            String email = txtEmail.text.trim();
+                            String password = txtPassword.text.trim();
+                            String name = txtName.text.trim();
+                            String mobile = txtMobile.text.trim();
+                            String address = txtAddress.text.trim();
 
-                         
                             bool success = await signUpProviderNotifier.signUp(
-                               email,password
+                              email: email,
+                              password: password,
+                              name: name,
+                              mobile: mobile,
+                              address: address,
                             );
 
                             if (success) {
-                             
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -171,9 +175,12 @@ class SignUpView extends ConsumerWidget {
                                 ),
                               );
                             } else {
-                            
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("email is already taken. Please try again.")),
+                                const SnackBar(
+                                  content: Text(
+                                    "Email is already taken. Please try again.",
+                                  ),
+                                ),
                               );
                             }
                           }
@@ -181,7 +188,6 @@ class SignUpView extends ConsumerWidget {
                       ),
                 const SizedBox(height: 25),
 
-              
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,

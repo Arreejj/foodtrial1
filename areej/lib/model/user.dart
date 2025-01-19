@@ -6,10 +6,11 @@ class User {
   final String email;
   final String mobile;
   final String address;
-  final String password;
-  final String userType;
+  final String password; // Consider hashing this
+  final String role; // "admin", "owner", or "user"
+  final String? restaurantId; // Nullable for non-owners
   final DateTime joinDate;
-  final int? ordersCount;
+  final int ordersCount;
 
   User({
     this.id,
@@ -18,9 +19,10 @@ class User {
     required this.mobile,
     required this.address,
     required this.password,
-    this.userType = 'user', // Default userType is 'user'
+    this.role = 'user',
+    this.restaurantId,
     required this.joinDate,
-    this.ordersCount,
+    this.ordersCount = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -29,29 +31,32 @@ class User {
       'email': email,
       'mobile': mobile,
       'address': address,
-      'password': password,
+      'password': password, // Consider storing hashed password
+      'role': role,
+      'restaurantId': restaurantId,
+      'joinDate': joinDate,
+      'ordersCount': ordersCount,
     };
   }
 
   factory User.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>? ?? {};
     return User(
-       id: doc.id, 
-      name: data['name'] ?? '', // Default to empty string if missing
-      email: data['email'] ?? '', // Default to empty string if missing
-      mobile: data['mobile'] ?? '', // Default to empty string if missing
-      address: data['address'] ?? '', // Default to empty string if missing
-      password: data['password'] ?? '', // Default to empty string if missing
-      userType: data['userType'] ?? 'user', // Default to 'user' if missing
-      joinDate: (data['joinDate'] as Timestamp)
-          .toDate(), // Convert Timestamp to DateTime
-      ordersCount: data['ordersCount'] != null
-          ? data['ordersCount'] as int
-          : 0, // Default to 0 if null
+      id: doc.id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      mobile: data['mobile'] ?? '',
+      address: data['address'] ?? '',
+      password: data['password'] ?? '',
+      role: data['role'] ?? 'user',
+      restaurantId: data['restaurantId'],
+      joinDate: data['joinDate'] != null
+          ? (data['joinDate'] as Timestamp).toDate()
+          : DateTime.now(),
+      ordersCount: data['ordersCount'] != null ? data['ordersCount'] as int : 0,
     );
   }
 
-  // Validation for fields
   String? validateName() {
     if (name.isEmpty) {
       return "Please enter your name";
@@ -95,7 +100,6 @@ class User {
     return null;
   }
 
-  // Method to check if passwords match
   static String? validateConfirmPassword(
       String password, String confirmPassword) {
     if (confirmPassword.isEmpty) {

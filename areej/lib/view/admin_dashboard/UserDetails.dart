@@ -21,11 +21,9 @@ class UserDetails extends StatelessWidget {
             Text('Name: ${user.name}'),
             Text('id: ${user.id}'),
             Text('Email: ${user.email}'),
-            Text('User Type: ${user.userType}'),
-            if (user.userType == 'user') 
-              Text('Orders Count: ${user.ordersCount}'),
+            Text('User Type: ${user.role}'),
+            if (user.role == 'user') Text('Orders Count: ${user.ordersCount}'),
             Text('Join Date: ${user.joinDate.toLocal()}'),
-            
           ],
         ),
       ),

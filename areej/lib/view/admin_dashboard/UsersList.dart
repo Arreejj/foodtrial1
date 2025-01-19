@@ -47,7 +47,7 @@ class _UsersListState extends State<UsersList> {
               'mobile': user.mobile,
               'address': user.address,
               'password': user.password,
-              'userType': user.userType,
+              'userType': user.role,
               'joinDate': user.joinDate,
               'ordersCount': user.ordersCount,
             });

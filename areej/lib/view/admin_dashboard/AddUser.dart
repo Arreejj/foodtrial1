@@ -26,28 +26,33 @@ class AddUser extends StatelessWidget {
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
-                validator: (value) => value?.isEmpty ?? true ? 'Please enter a name' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Please enter a name' : null,
               ),
               TextFormField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) => value?.isEmpty ?? true ? 'Please enter an email' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Please enter an email' : null,
               ),
               TextFormField(
                 controller: mobileController,
                 decoration: const InputDecoration(labelText: 'Mobile'),
-                validator: (value) => value?.isEmpty ?? true ? 'Please enter a mobile' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Please enter a mobile' : null,
               ),
               TextFormField(
                 controller: addressController,
                 decoration: const InputDecoration(labelText: 'Address'),
-                validator: (value) => value?.isEmpty ?? true ? 'Please enter an address' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Please enter an address' : null,
               ),
               TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                validator: (value) => value?.isEmpty ?? true ? 'Please enter a password' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Please enter a password' : null,
               ),
               const SizedBox(height: 16),
               ElevatedButton(

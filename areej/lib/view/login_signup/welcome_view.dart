@@ -92,7 +92,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  SignUpView()),
+                  MaterialPageRoute(builder: (context) => SignUpView()),
                 );
               },
               style: OutlinedButton.styleFrom(
