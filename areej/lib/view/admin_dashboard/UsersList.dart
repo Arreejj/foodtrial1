@@ -19,6 +19,7 @@ class _UsersListState extends State<UsersList> {
   late CollectionReference usersCollection;
   List<DocumentSnapshot> _users = [];
   bool _isLoading = true;
+  String _sortOrder = "Ascending";
 
   @override
   void initState() {
@@ -112,6 +113,16 @@ class _UsersListState extends State<UsersList> {
 
   @override
   Widget build(BuildContext context) {
+    
+    List<DocumentSnapshot> sortedUsers = [..._users];
+    if (_sortOrder == "Ascending") {
+      sortedUsers.sort((a, b) =>
+          (a['name'] ?? '').toString().compareTo((b['name'] ?? '').toString()));
+    } else {
+      sortedUsers.sort((a, b) =>
+          (b['name'] ?? '').toString().compareTo((a['name'] ?? '').toString()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFFF6F00),
@@ -119,6 +130,24 @@ class _UsersListState extends State<UsersList> {
         title: const Text('Users List',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         actions: [
+          
+          DropdownButton<String>(
+            dropdownColor: Colors.white,
+            value: _sortOrder,
+            onChanged: (newValue) {
+              setState(() => _sortOrder = newValue!);
+            },
+            items: const [
+              DropdownMenuItem(
+                value: "Ascending",
+                child: Text("Sort A-Z"),
+              ),
+              DropdownMenuItem(
+                value: "Descending",
+                child: Text("Sort Z-A"),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: _navigateToAddUser,
@@ -129,7 +158,7 @@ class _UsersListState extends State<UsersList> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : _users.isEmpty
+          : sortedUsers.isEmpty
               ? const Center(
                   child: Text(
                     "No users found.",
@@ -137,9 +166,9 @@ class _UsersListState extends State<UsersList> {
                   ),
                 )
               : ListView.builder(
-                  itemCount: _users.length,
+                  itemCount: sortedUsers.length,
                   itemBuilder: (context, index) {
-                    final userDoc = _users[index];
+                    final userDoc = sortedUsers[index];
 
                     if (!userDoc.exists || userDoc.data() == null) {
                       return Container();

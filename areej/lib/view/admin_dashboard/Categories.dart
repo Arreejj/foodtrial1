@@ -99,6 +99,7 @@ class _CategoriesState extends State<Categories> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
         title: const Text(
           "Manage Categories",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
