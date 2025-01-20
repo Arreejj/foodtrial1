@@ -1,5 +1,7 @@
 import 'package:areej/view/home/home_view.dart';
 import 'package:areej/view/login_signup/welcome_view.dart';
+import 'package:areej/view/resturant_dashboard/ResturantsOrderDetail.dart';
+import 'package:areej/view/resturant_dashboard/ResturantsOrders.dart';
 import 'package:areej/view/resturant_dashboard/status.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
@@ -57,7 +59,7 @@ class Sidebar extends StatelessWidget {
             onTap: () {
              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Orders()),
+                MaterialPageRoute(builder: (context) => ResturantsOrders()),
                 );
             },
           ),

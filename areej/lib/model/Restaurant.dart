@@ -4,6 +4,7 @@ class Restaurant {
   final String location;
   final String cuisine;
   final String ownerId;
+  final String imageUrl;
 
   Restaurant({
     this.id,
@@ -11,14 +12,16 @@ class Restaurant {
     required this.location,
     required this.cuisine,
     required this.ownerId,
+    required this.imageUrl,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'location': location,
-      'cuisine':cuisine,
+      'cuisine': cuisine,
       'ownerId': ownerId,
+      'imageUrl': imageUrl,
     };
   }
 
@@ -27,12 +30,13 @@ class Restaurant {
       id: id,
       name: data['name'] ?? '',
       location: data['location'] ?? '',
-      cuisine: data['cuisine']?? '',
+      cuisine: data['cuisine'] ?? '',
       ownerId: data['ownerId'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
     );
   }
 
-  String? validateName() {
+   String? validateName() {
     if (name.isEmpty) {
       return "Please enter the restaurant name";
     }

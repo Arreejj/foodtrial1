@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
 class Resturantsettings extends StatefulWidget {
-  const Resturantsettings({super.key});
+  const Resturantsettings ({super.key});
 
   @override
   _ResturantsettingsState createState() => _ResturantsettingsState();
 }
 
-class _ResturantsettingsState extends State<Resturantsettings> {
+class _ResturantsettingsState extends State<Resturantsettings > {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text('Settings',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

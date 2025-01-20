@@ -59,6 +59,8 @@ class _OffersState extends State<Offers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
         title: const Text("Manage Offers"),
         centerTitle: true,
       ),

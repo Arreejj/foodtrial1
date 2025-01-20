@@ -51,6 +51,8 @@ class _ResturantDashboardState extends State<ResturantDashboard> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+         backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
         title: const Text('MealMonkey Restaurant Panel'),
         leading: IconButton(
           icon: const Icon(Icons.menu),

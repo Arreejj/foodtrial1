@@ -55,6 +55,8 @@ class _ProductsState extends State<Products> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
         title: const Text("Add Food Items"),
         centerTitle: true,
       ),
