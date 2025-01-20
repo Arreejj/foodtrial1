@@ -6,7 +6,6 @@ import 'package:areej/view/resturant_dashboard/status.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 import '../view/admin_dashboard/Orders.dart';
-import '../view/resturant_dashboard/Category.dart';
 import '../view/resturant_dashboard/Offers.dart';
 import '../view/resturant_dashboard/Products.dart';
 import '../view/resturant_dashboard/ResturantReport.dart';
@@ -63,17 +62,7 @@ class Sidebar extends StatelessWidget {
                 );
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.category, color: Color(0xFF4A4B4D)),
-            title: Text('Categories',
-                style: Theme.of(context).textTheme.bodyLarge),
-            onTap: () {
-             Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Category()),
-                );
-            },
-          ),
+          
           ListTile(
             leading: const Icon(Icons.inventory, color: Color(0xFF4A4B4D)),
             title:

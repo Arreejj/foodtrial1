@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../view/admin_dashboard/ResturantsList.dart';
 import '../view/admin_dashboard/UsersList.dart';
+import '../view/admin_dashboard/categories.dart';
 import '../view/admin_dashboard/report.dart';
 import '../view/admin_dashboard/Orders.dart';
 import '../view/admin_dashboard/Settings.dart';
@@ -68,6 +69,17 @@ class Sidebar extends StatelessWidget {
              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) =>const RestaurantsList()),
+                );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.category, color: Color(0xFF4A4B4D)),
+            title: Text('Categories',
+                style: Theme.of(context).textTheme.bodyLarge),
+            onTap: () {
+             Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Categories()),
                 );
             },
           ),

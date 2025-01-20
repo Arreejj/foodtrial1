@@ -1,5 +1,6 @@
 import 'package:areej/view/resturant_dashboard/ResturantsOrderDetail.dart';
 import 'package:flutter/material.dart';
+import 'package:areej/view/admin_dashboard/OrderDetail.dart'; 
 import 'package:areej/model/Order.dart';
 
 class ResturantsOrders extends StatefulWidget {
