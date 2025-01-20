@@ -1,28 +1,84 @@
 import 'package:areej/view/home/home_view.dart';
-import 'package:areej/view/login_signup/sign_up_view.dart';
+import 'package:areej/view/login_signup/reset_password_view.dart';
+import 'package:areej/view/admin_dashboard/AdminDashboard.dart';
+import 'package:areej/view/resturant_dashboard/ResturantDashboard.dart';
 import 'package:areej/common/color_extension.dart';
 import 'package:areej/common_widget/round_button.dart';
 import 'package:areej/common_widget/round_textfield.dart';
-import 'package:areej/common_widget/round_icon_button.dart';
-import 'package:areej/view/login_signup/reset_password_view.dart';
-import 'package:areej/view/admin_dashboard/AdminDashboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:areej/providers/sign_in_provider.dart';
 import 'package:areej/services/firebase_auth_implementation/firebase_auth_service.dart';
 
-import '../resturant_dashboard/ResturantDashboard.dart';
-
-class LoginView extends ConsumerWidget {
-  const LoginView({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final signInState = ref.watch(signInProvider);
+  State<LoginView> createState() => _LoginViewState();
+}
 
-    TextEditingController txtEmail = TextEditingController();
-    TextEditingController txtPassword = TextEditingController();
+class _LoginViewState extends State<LoginView> {
+  final TextEditingController txtEmail = TextEditingController();
+  final TextEditingController txtPassword = TextEditingController();
+  final FirebaseAuthService authService = FirebaseAuthService();
 
+  bool isLoading = false;
+
+  void _handleLogin() async {
+    String email = txtEmail.text.trim();
+    String password = txtPassword.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter both email and password.")),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Sign in the user and fetch their data
+      final userData = await authService.signInWithEmailAndPassword(email, password);
+
+      if (userData != null) {
+        String role = userData['role'] ?? 'user';
+
+        // Redirect based on the user's role
+        if (role == 'admin') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AdminDashboard()),
+          );
+        } else if (role == 'owner') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ResturantDashboard()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeView()),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Invalid email or password.")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -34,16 +90,18 @@ class LoginView extends ConsumerWidget {
               Text(
                 "Login",
                 style: TextStyle(
-                    color: TColor.primaryText,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w800),
+                  color: TColor.primaryText,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               Text(
                 "Add your details to login",
                 style: TextStyle(
-                    color: TColor.secondaryText,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
+                  color: TColor.secondaryText,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(height: 25),
               RoundTextfield(
@@ -58,78 +116,18 @@ class LoginView extends ConsumerWidget {
                 obscureText: true,
               ),
               const SizedBox(height: 25),
-              signInState.isLoading
+              isLoading
                   ? const CircularProgressIndicator()
                   : RoundButton(
                       title: "Login",
-                      onPressed: () async {
-                        if (txtEmail.text.isNotEmpty &&
-                            txtPassword.text.isNotEmpty) {
-                          String email = txtEmail.text;
-                          String password = txtPassword.text;
-
-                          // Check for owner credentials
-                          if (email == 'owner@gmail.com' &&
-                              password == 'owner@123') {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ResturantDashboard(),
-                              ),
-                            );
-                          }
-                          // Check for admin credentials
-                          else if (email == 'admin@gmail.com' &&
-                              password == 'admin@123') {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AdminDashboard(),
-                              ),
-                            );
-                          } else {
-                            final signInProviderNotifier =
-                                ref.read(signInProvider.notifier);
-
-                            // Proceed with regular user login
-                            bool success = await signInProviderNotifier.signIn(
-                                email, password);
-
-                            if (success) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomeView(),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(signInState.errorMessage.isEmpty
-                                      ? 'Email or password wrong. Please try again.'
-                                      : signInState.errorMessage),
-                                ),
-                              );
-                            }
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  "Please fill in both email and password."),
-                            ),
-                          );
-                        }
-                      },
+                      onPressed: _handleLogin,
                     ),
               const SizedBox(height: 25),
               InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const ResetPasswordView(),
-                    ),
+                    MaterialPageRoute(builder: (context) => ResetPasswordView()),
                   );
                 },
                 child: Text(
@@ -140,77 +138,6 @@ class LoginView extends ConsumerWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
-              const SizedBox(height: 25),
-              Text(
-                "or Login With",
-                style: TextStyle(
-                    color: TColor.secondaryText,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 30),
-              RoundIconButton(
-                icon: "assets/img/facebook_logo.png",
-                title: "Login with Facebook",
-                color: const Color(0xff367FC0),
-                onPressed: () {},
-              ),
-              const SizedBox(height: 25),
-              RoundIconButton(
-                icon: "assets/img/google_logo.png",
-                title: "Login with Google",
-                color: const Color(0xffDD4B39),
-                onPressed: () async {
-                  try {
-                    final user = await FirebaseAuthService().signInWithGoogle();
-                    if (user != null) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeView()),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                "Google sign-in failed. Please try again.")),
-                      );
-                    }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Error: $e")),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Don't have an Account? ",
-                    style: TextStyle(
-                        color: TColor.secondaryText,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SignUpView()));
-                    },
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                          color: TColor.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

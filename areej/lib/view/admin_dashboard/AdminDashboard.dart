@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:areej/common_widget/sidebar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -12,35 +13,51 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late CollectionReference usersCollection;
-  List<DocumentSnapshot> _users = [];
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String userName = "Loading..."; 
+  String userEmail = "Loading..."; 
 
   @override
   void initState() {
     super.initState();
-    usersCollection = _firestore.collection('users');
-    _fetchUsers();
+    _fetchAdminData();
   }
 
-  Future<void> _fetchUsers() async {
-    final querySnapshot = await usersCollection.get();
-    setState(() {
-      _users = querySnapshot.docs;
-    });
+  Future<void> _fetchAdminData() async {
+    try {
+      final userId = _auth.currentUser?.uid;
+      if (userId != null) {
+        final userSnapshot =
+            await _firestore.collection('users').doc(userId).get();
+        if (userSnapshot.exists) {
+          setState(() {
+            userName = userSnapshot.data()?['name'] ?? 'Unknown Admin';
+            userEmail = userSnapshot.data()?['email'] ?? 'No Email';
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching admin data: $e");
+      setState(() {
+        userName = "Error";
+        userEmail = "Error";
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey, 
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('MealMonkey Dashboard'),
-        backgroundColor: Color(0xffffc6011),
+        backgroundColor: const Color(0xffffc6011),
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {
-            _scaffoldKey.currentState?.openDrawer(); 
+            _scaffoldKey.currentState?.openDrawer();
           },
         ),
       ),
@@ -55,17 +72,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            // User profile section
+            
             Row(
               children: [
                 CircleAvatar(
                   radius: 40,
                   backgroundColor: Colors.orange,
                   child: Text(
-                    'A', // Admin's initial
+                    userName.isNotEmpty ? userName[0].toUpperCase() : '',
                     style: const TextStyle(
-                      fontSize: 28, 
-                      fontWeight: FontWeight.bold, 
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
@@ -75,12 +92,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Admin ', 
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      userName, 
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
-                      'admin@gmail.com',
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      userEmail, 
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
                     ),
                   ],
                 ),
@@ -91,5 +114,4 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ),
     );
   }
-
 }
