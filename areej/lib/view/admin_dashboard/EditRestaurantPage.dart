@@ -96,15 +96,29 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
         _cuisineController.text.isNotEmpty &&
         _selectedOwnerId.isNotEmpty) {
       try {
-        await _restaurantService.updateRestaurant(
-          restaurantId: widget.restaurantId,
-          name: _nameController.text,
-          location: _locationController.text,
-          cuisine: _cuisineController.text,
-          ownerId: _selectedOwnerId, // Update the selected owner
-          imagePath: _imagePath, // Update the image path if provided
-        );
-        Navigator.pop(context, 'Restaurant updated successfully');
+        // Fetch current restaurant data to check previous owner
+        DocumentSnapshot restaurantSnapshot = await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(widget.restaurantId)
+            .get();
+
+        if (restaurantSnapshot.exists) {
+          var data = restaurantSnapshot.data() as Map<String, dynamic>;
+          String previousOwnerId = data['ownerId'] ?? '';
+
+          // Call the service method to handle owner change and update
+          await _restaurantService.updateRestaurantOwner(
+            restaurantId: widget.restaurantId,
+            newOwnerId: _selectedOwnerId,
+            previousOwnerId: previousOwnerId,
+            name: _nameController.text,
+            location: _locationController.text,
+            cuisine: _cuisineController.text,
+            imagePath: _imagePath,
+          );
+
+          Navigator.pop(context, 'Restaurant updated successfully');
+        }
       } catch (e) {
         print("Error updating restaurant: $e");
       }

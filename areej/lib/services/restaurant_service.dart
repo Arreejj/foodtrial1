@@ -87,4 +87,39 @@ class RestaurantService {
       throw Exception("Failed to update owner");
     }
   }
+
+  // Update owner and handle the owner switch (reset previous owner’s restaurant ID)
+  Future<void> updateRestaurantOwner({
+    required String restaurantId,
+    required String newOwnerId,
+    required String previousOwnerId,
+    required String name,
+    required String location,
+    required String cuisine,
+    String? imagePath,
+  }) async {
+    try {
+      // Reset previous owner's restaurant ID to 'not assigned'
+      if (previousOwnerId.isNotEmpty) {
+        await _firestore.collection('users').doc(previousOwnerId).update({
+          'restaurantId': 'not assigned',
+        });
+      }
+
+      // Update the restaurant with the new owner's ID
+      await _firestore.collection('restaurants').doc(restaurantId).update({
+        'name': name,
+        'location': location,
+        'cuisine': cuisine,
+        'ownerId': newOwnerId,
+        'imagePath': imagePath,
+      });
+
+      // Update the new owner's restaurant ID
+      await updateOwnerWithRestaurant(newOwnerId, restaurantId);
+    } catch (e) {
+      print("Error updating restaurant owner: $e");
+      throw Exception("Failed to update restaurant owner");
+    }
+  }
 }
