@@ -1,3 +1,4 @@
+//AddUser.dart
 import 'package:flutter/material.dart';
 import '/model/user.dart';
 
@@ -14,14 +15,14 @@ class AddUser extends StatelessWidget {
     final mobileController = TextEditingController();
     final addressController = TextEditingController();
     final passwordController = TextEditingController();
-    String userRole = 'user'; 
+    String userRole = 'user';
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFFF6F00),
         foregroundColor: Colors.white,
         title: const Text('Add New User',
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -29,7 +30,6 @@ class AddUser extends StatelessWidget {
           key: formKey,
           child: Column(
             children: [
-              
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
@@ -40,8 +40,6 @@ class AddUser extends StatelessWidget {
                   return null;
                 },
               ),
-              
-             
               TextFormField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
@@ -58,8 +56,6 @@ class AddUser extends StatelessWidget {
                   return null;
                 },
               ),
-              
-              
               TextFormField(
                 controller: mobileController,
                 decoration: const InputDecoration(labelText: 'Mobile'),
@@ -74,8 +70,6 @@ class AddUser extends StatelessWidget {
                   return null;
                 },
               ),
-              
-             
               TextFormField(
                 controller: addressController,
                 decoration: const InputDecoration(labelText: 'Address'),
@@ -86,8 +80,6 @@ class AddUser extends StatelessWidget {
                   return null;
                 },
               ),
-              
-            
               TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(labelText: 'Password'),
@@ -102,8 +94,6 @@ class AddUser extends StatelessWidget {
                   return null;
                 },
               ),
-              
-           
               DropdownButtonFormField<String>(
                 value: userRole,
                 decoration: const InputDecoration(labelText: 'User Role'),
@@ -120,9 +110,7 @@ class AddUser extends StatelessWidget {
                   }
                 },
               ),
-
               const SizedBox(height: 16),
-          
               ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState?.validate() ?? false) {
@@ -135,12 +123,14 @@ class AddUser extends StatelessWidget {
                       role: userRole,
                       joinDate: DateTime.now(),
                     );
-                    onAddUser(newUser); // Call the callback function to add the user
+                    onAddUser(
+                        newUser); // Call the callback function to add the user
                     Navigator.pop(context); // Close the AddUser page
                   }
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6F00),
-                foregroundColor: Colors.white),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFFF6F00),
+                    foregroundColor: Colors.white),
                 child: const Text('Add User'),
               ),
             ],

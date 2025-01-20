@@ -1,3 +1,4 @@
+//sign_up_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:areej/services/firebase_auth_implementation/firebase_auth_service.dart';
 

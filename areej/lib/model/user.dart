@@ -1,3 +1,4 @@
+// user.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
@@ -35,7 +36,7 @@ class User {
       'role': role,
       'restaurantId': restaurantId,
       'joinDate': joinDate,
-      'ordersCount': ordersCount,
+      'ordersCount': ordersCount, // Store ordersCount as an integer
     };
   }
 
@@ -53,7 +54,9 @@ class User {
       joinDate: data['joinDate'] != null
           ? (data['joinDate'] as Timestamp).toDate()
           : DateTime.now(),
-      ordersCount: data['ordersCount'] != null ? data['ordersCount'] as int : 0,
+      ordersCount: data['ordersCount'] != null
+          ? data['ordersCount'] as int // Directly treat ordersCount as int
+          : 0, // Default to 0 if ordersCount is null
     );
   }
 
