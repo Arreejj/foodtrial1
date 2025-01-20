@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:areej/model/Restaurant.dart';
 
 class RestaurantService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -26,6 +27,20 @@ class RestaurantService {
       print("Error fetching owners: $e");
       throw Exception("Failed to fetch owners");
     }
+  }
+
+  // Fetch restaurants from Firestore
+ 
+  Stream<List<Restaurant>> getRestaurants() {
+    return _firestore.collection('restaurants').snapshots().map((snapshot) {
+      if (snapshot.docs.isEmpty) {
+        return []; 
+      }
+      return snapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return Restaurant.fromDocument(data, doc.id);
+      }).toList();
+    });
   }
 
   // Add a new restaurant to Firestore

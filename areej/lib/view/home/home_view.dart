@@ -1,13 +1,16 @@
-import 'package:areej/common_widget/round_textfield.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../common_widget/category_cell.dart';
-import '../../common_widget/most_popular_cell.dart';
-import '../../common_widget/popular_restaurant_show.dart';
-import '../../common_widget/recent_item_row.dart';
-import '../../common_widget/view_all_title_row.dart';
-import 'package:flutter/material.dart';
 import 'package:areej/common/color_extension.dart';
+import 'package:areej/common_widget/category_cell.dart';
+import 'package:areej/common_widget/most_popular_cell.dart';
+import 'package:areej/common_widget/popular_restaurant_show.dart';
+import 'package:areej/common_widget/recent_item_row.dart';
+import 'package:areej/common_widget/view_all_title_row.dart';
+import 'package:areej/common_widget/round_textfield.dart';
+import 'package:areej/services/restaurant_service.dart';
+import 'package:areej/model/Restaurant.dart';
+
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
@@ -17,7 +20,8 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
-
+  final RestaurantService restaurantService = RestaurantService();
+  
   List catArr = [
     {"image": "assets/img/cat_offer.png", "name": "Offers"},
     {"image": "assets/img/cat_sri.png", "name": "Sri Lankan"},
@@ -175,9 +179,7 @@ class _HomeViewState extends State<HomeView> {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -188,9 +190,7 @@ class _HomeViewState extends State<HomeView> {
                       style:
                           TextStyle(color: TColor.secondaryText, fontSize: 11),
                     ),
-                    const SizedBox(
-                      height: 6,
-                    ),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -201,22 +201,18 @@ class _HomeViewState extends State<HomeView> {
                               fontSize: 16,
                               fontWeight: FontWeight.w700),
                         ),
-                        const SizedBox(
-                          width: 25,
-                        ),
+                        const SizedBox(width: 25),
                         Image.asset(
                           "assets/img/dropdown.png",
                           width: 12,
                           height: 12,
-                        )
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: RoundTextfield(
@@ -233,9 +229,7 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               SizedBox(
                 height: 120,
                 child: ListView.builder(
@@ -251,26 +245,41 @@ class _HomeViewState extends State<HomeView> {
                   }),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ViewAllTitleRow(
-                  title: "Popular Restaurants",
-                  onView: () {},
-                ),
-              ),
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                itemCount: popArr.length,
-                itemBuilder: ((context, index) {
-                  var pObj = popArr[index] as Map? ?? {};
-                  return PopularRestaurantRow(
-                    pObj: pObj,
-                    onTap: () {},
-                  );
-                }),
-              ),
+              StreamBuilder<List<Restaurant>>(
+  stream: restaurantService.getRestaurants(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+      return Center(child: Text('Error loading restaurants'));
+    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      return Center(child: Text('No restaurants available'));
+    } else {
+      var restaurantList = snapshot.data!;
+      return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        itemCount: restaurantList.length,
+        itemBuilder: (context, index) {
+          var restaurant = restaurantList[index];
+          return PopularRestaurantRow(
+            pObj: {
+              'imagePath': restaurant.imagePath,
+              'name': restaurant.name,
+              'rate': '4.9',
+              'rating': '124',
+              'type': 'Cafa',
+              'food_type': 'Western Food',
+            },
+            onTap: () {},
+          );
+        },
+      );
+    }
+  },
+),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ViewAllTitleRow(
@@ -312,7 +321,7 @@ class _HomeViewState extends State<HomeView> {
                     onTap: () {},
                   );
                 }),
-              )
+              ),
             ],
           ),
         ),

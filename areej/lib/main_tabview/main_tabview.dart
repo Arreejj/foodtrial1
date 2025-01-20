@@ -58,7 +58,7 @@ class _MainTabViewState extends State<MainTabView> {
     _pages.addAll([
       const MenuView(),
       const OfferView(),
-      const HomeView(),
+       HomeView(),
       ProfileView(userId: userId!),  // Pass the userId here
       const MoreView(),
     ]);
