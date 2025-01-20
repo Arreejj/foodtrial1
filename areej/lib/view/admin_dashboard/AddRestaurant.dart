@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:areej/services/restaurant_service.dart'; // Import the RestaurantService
 
 class AddRestaurant extends StatefulWidget {
   const AddRestaurant({super.key});
@@ -14,7 +14,9 @@ class _AddRestaurantState extends State<AddRestaurant> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _cuisineController = TextEditingController();
   String _selectedOwnerId = '';
+  String? _selectedImagePath; // Store the image path
   List<Map<String, dynamic>> owners = [];
+  final RestaurantService _restaurantService = RestaurantService();
 
   @override
   void initState() {
@@ -32,24 +34,11 @@ class _AddRestaurantState extends State<AddRestaurant> {
 
   Future<void> _fetchOwners() async {
     try {
-      QuerySnapshot ownerSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('role', isEqualTo: 'owner')
-          .get();
-
-      if (ownerSnapshot.docs.isNotEmpty) {
-        setState(() {
-          owners = ownerSnapshot.docs.map((doc) {
-            var data = doc.data() as Map<String, dynamic>;
-            return {
-              'id': doc.id,
-              'name': data['name'] ?? 'Unknown Owner',
-            };
-          }).toList();
-        });
-      } else {
-        print("No owners found.");
-      }
+      List<Map<String, dynamic>> fetchedOwners =
+          await _restaurantService.fetchOwners();
+      setState(() {
+        owners = fetchedOwners;
+      });
     } catch (e) {
       print("Error fetching owners: $e");
     }
@@ -59,10 +48,10 @@ class _AddRestaurantState extends State<AddRestaurant> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      backgroundColor: const Color(0xFFFF6F00),
-      foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFFFF6F00),
+        foregroundColor: Colors.white,
         title: const Text('Add Restaurant',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -131,39 +120,89 @@ class _AddRestaurantState extends State<AddRestaurant> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 16),
+              // Horizontal Image selection
+              const Text('Select Restaurant Image'),
+              const SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildImageOption('assets/img/res_1.png'),
+                    _buildImageOption('assets/img/res_2.png'),
+                    _buildImageOption('assets/img/res_3.png'),
+                  ],
+                ),
+              ),
               const SizedBox(height: 24),
-            ElevatedButton(
-  onPressed: () {
-    if (_formKey.currentState!.validate() && _selectedOwnerId.isNotEmpty) {
-      // Add restaurant to Firestore with the selected owner
-      FirebaseFirestore.instance.collection('restaurants').add({
-        'name': _nameController.text,
-        'location': _locationController.text,
-        'cuisine': _cuisineController.text,
-        'ownerId': _selectedOwnerId, // Associate the restaurant with the selected owner
-      }).then((value) {
-        // After adding the restaurant, fetch the newly added restaurant and send it back
-        Navigator.pop(context, {
-          'name': _nameController.text,
-          'location': _locationController.text,
-          'cuisine': _cuisineController.text,
-          'ownerId': _selectedOwnerId,
-        });
-       
-      }).catchError((error) {
-        print("Failed to add restaurant: $error");
-      });
-    } else {
-      print("Please select an owner.");
-    }
-  },
-  style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6F00),
-                foregroundColor: Colors.white),
-  child:const Text('Add Restaurant'),
-),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate() &&
+                      _selectedOwnerId.isNotEmpty &&
+                      _selectedImagePath != null) {
+                    try {
+                      // Step 1: Add the restaurant
+                      String restaurantId =
+                          await _restaurantService.addRestaurant(
+                        name: _nameController.text,
+                        location: _locationController.text,
+                        cuisine: _cuisineController.text,
+                        ownerId: _selectedOwnerId,
+                        imagePath: _selectedImagePath!, // Pass the image path
+                      );
 
+                      // Step 2: Update the owner's restaurantId
+                      await _restaurantService.updateOwnerWithRestaurant(
+                        _selectedOwnerId,
+                        restaurantId,
+                      );
+
+                      // Navigate back or show success message
+                      Navigator.pop(context);
+                    } catch (e) {
+                      print("Error adding restaurant and updating owner: $e");
+                    }
+                  } else {
+                    print("Please select all fields.");
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFFF6F00),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Add Restaurant'),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // Widget to display each image as an option
+  Widget _buildImageOption(String imagePath) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedImagePath = imagePath;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: _selectedImagePath == imagePath
+                ? Colors.orange
+                : Colors.transparent,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Image.asset(
+          imagePath,
+          width: 80,
+          height: 80,
+          fit: BoxFit.cover,
         ),
       ),
     );

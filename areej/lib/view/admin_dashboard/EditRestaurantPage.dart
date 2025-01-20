@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:areej/services/restaurant_service.dart';
 
 class EditRestaurantPage extends StatefulWidget {
-  final String restaurantId;  // Added restaurantId to uniquely identify the restaurant
+  final String
+      restaurantId; // Added restaurantId to uniquely identify the restaurant
 
   const EditRestaurantPage({
     super.key,
@@ -18,7 +20,10 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
   late TextEditingController _locationController;
   late TextEditingController _cuisineController;
   String _selectedOwnerId = '';
+  String? _imagePath; // Optional image path
   List<Map<String, dynamic>> owners = []; // List to hold owners' data
+
+  final RestaurantService _restaurantService = RestaurantService();
 
   @override
   void initState() {
@@ -39,7 +44,8 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
     try {
       DocumentSnapshot restaurantSnapshot = await FirebaseFirestore.instance
           .collection('restaurants')
-          .doc(widget.restaurantId) // Fetch the restaurant using the provided ID
+          .doc(
+              widget.restaurantId) // Fetch the restaurant using the provided ID
           .get();
 
       if (restaurantSnapshot.exists) {
@@ -49,6 +55,7 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
           _locationController = TextEditingController(text: data['location']);
           _cuisineController = TextEditingController(text: data['cuisine']);
           _selectedOwnerId = data['ownerId']; // Set the selected owner ID
+          _imagePath = data['imagePath']; // Set the image path if exists
         });
       } else {
         print("Restaurant not found.");
@@ -84,17 +91,25 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
   }
 
   Future<void> _saveChanges() async {
-    try {
-      await FirebaseFirestore.instance.collection('restaurants').doc(widget.restaurantId).update({
-        'name': _nameController.text,
-        'location': _locationController.text,
-        'cuisine': _cuisineController.text,
-        'ownerId': _selectedOwnerId, // Update the selected owner
-      });
-      Navigator.pop(context, 'Restaurant updated successfully');
-      
-    } catch (e) {
-      print("Error updating restaurant: $e");
+    if (_nameController.text.isNotEmpty &&
+        _locationController.text.isNotEmpty &&
+        _cuisineController.text.isNotEmpty &&
+        _selectedOwnerId.isNotEmpty) {
+      try {
+        await _restaurantService.updateRestaurant(
+          restaurantId: widget.restaurantId,
+          name: _nameController.text,
+          location: _locationController.text,
+          cuisine: _cuisineController.text,
+          ownerId: _selectedOwnerId, // Update the selected owner
+          imagePath: _imagePath, // Update the image path if provided
+        );
+        Navigator.pop(context, 'Restaurant updated successfully');
+      } catch (e) {
+        print("Error updating restaurant: $e");
+      }
+    } else {
+      print("Please fill all fields.");
     }
   }
 
@@ -105,7 +120,7 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
         backgroundColor: const Color(0xFFFF6F00),
         foregroundColor: Colors.white,
         title: const Text('Edit Restaurant',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -135,7 +150,7 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
               ),
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>( 
+            DropdownButtonFormField<String>(
               value: _selectedOwnerId.isEmpty ? null : _selectedOwnerId,
               hint: const Text('Select Restaurant Owner'),
               items: owners.map((owner) {
@@ -156,18 +171,10 @@ class _EditRestaurantPageState extends State<EditRestaurantPage> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                if (_nameController.text.isNotEmpty && 
-                    _locationController.text.isNotEmpty && 
-                    _cuisineController.text.isNotEmpty &&
-                    _selectedOwnerId.isNotEmpty) {
-                  _saveChanges();
-                } else {
-                  print("Please fill all fields.");
-                }
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6F00),
-                foregroundColor: Colors.white),
+              onPressed: _saveChanges,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFFF6F00),
+                  foregroundColor: Colors.white),
               child: const Text('Save Changes'),
             ),
           ],

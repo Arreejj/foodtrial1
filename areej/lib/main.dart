@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: const AuthStateHandler(), // Auth state handler to check the login status
+        home:
+            const AuthStateHandler(), // Auth state handler to check the login status
       ),
     );
   }
@@ -93,4 +94,3 @@ class FirebaseAuthService {
     await _auth.signOut();
   }
 }
-
